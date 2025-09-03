@@ -132,7 +132,7 @@ async function main() {
       year: 2022,
       type: VehicleType.TRUCK,
       capacity: 1000,
-      status: VehicleStatus.AVAILABLE
+      status: VehicleStatus.AVAILABLE,
     },
     {
       licensePlate: "VAN001",
@@ -141,7 +141,7 @@ async function main() {
       year: 2021,
       type: VehicleType.VAN,
       capacity: 500,
-      status: VehicleStatus.AVAILABLE
+      status: VehicleStatus.AVAILABLE,
     },
   ];
 

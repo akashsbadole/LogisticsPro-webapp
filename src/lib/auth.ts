@@ -4,6 +4,8 @@ import { db } from "@/lib/db";
 import bcrypt from "bcryptjs";
 
 export const authOptions = {
+  secret: process.env.NEXTAUTH_SECRET,
+  debug: process.env.NODE_ENV === "development",
   providers: [
     CredentialsProvider({
       name: "credentials",
