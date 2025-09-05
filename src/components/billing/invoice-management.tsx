@@ -1,19 +1,45 @@
-'use client'
+"use client";
 
-import { useState, useEffect } from 'react'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
-import { Badge } from '@/components/ui/badge'
-import { Input } from '@/components/ui/input'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
-import { Label } from '@/components/ui/label'
-import { Textarea } from '@/components/ui/textarea'
-import { 
-  Plus, 
-  Search, 
-  FileText, 
+import { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Plus,
+  Search,
+  FileText,
   DollarSign,
   Calendar,
   User,
@@ -26,162 +52,162 @@ import {
   CheckCircle,
   Clock,
   AlertTriangle,
-  Receipt
-} from 'lucide-react'
+  Receipt,
+} from "lucide-react";
 
 interface Invoice {
-  id: string
-  invoiceNumber: string
-  amount: number
-  tax: number
-  totalAmount: number
-  status: string
-  dueDate?: string
-  paidAt?: string
-  createdAt: string
+  id: string;
+  invoiceNumber: string;
+  amount: number;
+  tax: number;
+  totalAmount: number;
+  status: string;
+  dueDate?: string;
+  paidAt?: string;
+  createdAt: string;
   customer: {
-    id: string
-    name: string
-    email: string
-  }
+    id: string;
+    name: string;
+    email: string;
+  };
   order?: {
-    id: string
-    orderNumber: string
-  }
+    id: string;
+    orderNumber: string;
+  };
   payments: Array<{
-    id: string
-    amount: number
-    method: string
-    status: string
-    paidAt?: string
-  }>
+    id: string;
+    amount: number;
+    method: string;
+    status: string;
+    paidAt?: string;
+  }>;
 }
 
 interface InvoiceFormData {
-  orderId?: string
-  customerId: string
-  amount: string
-  tax: string
-  dueDate?: string
+  orderId?: string;
+  customerId: string;
+  amount: string;
+  tax: string;
+  dueDate?: string;
 }
 
 export default function InvoiceManagement() {
-  const [invoices, setInvoices] = useState<Invoice[]>([])
-  const [orders, setOrders] = useState<any[]>([])
-  const [customers, setCustomers] = useState<any[]>([])
-  const [loading, setLoading] = useState(true)
-  const [searchTerm, setSearchTerm] = useState('')
-  const [statusFilter, setStatusFilter] = useState('all')
-  const [isDialogOpen, setIsDialogOpen] = useState(false)
-  const [selectedInvoice, setSelectedInvoice] = useState<Invoice | null>(null)
+  const [invoices, setInvoices] = useState<Invoice[]>([]);
+  const [orders, setOrders] = useState<any[]>([]);
+  const [customers, setCustomers] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [selectedInvoice, setSelectedInvoice] = useState<Invoice | null>(null);
   const [formData, setFormData] = useState<InvoiceFormData>({
-    orderId: '',
-    customerId: '',
-    amount: '',
-    tax: '',
-    dueDate: ''
-  })
+    orderId: "",
+    customerId: "",
+    amount: "",
+    tax: "",
+    dueDate: "",
+  });
 
   useEffect(() => {
-    fetchInvoices()
-    fetchOrders()
-    fetchCustomers()
-  }, [])
+    fetchInvoices();
+    fetchOrders();
+    fetchCustomers();
+  }, []);
 
   const fetchInvoices = async () => {
     try {
-      const response = await fetch('/api/invoices')
+      const response = await fetch("/api/invoices");
       if (response.ok) {
-        const data = await response.json()
-        setInvoices(data)
+        const data = await response.json();
+        setInvoices(data);
       }
     } catch (error) {
-      console.error('Error fetching invoices:', error)
+      console.error("Error fetching invoices:", error);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const fetchOrders = async () => {
     try {
-      const response = await fetch('/api/orders')
+      const response = await fetch("/api/orders");
       if (response.ok) {
-        const data = await response.json()
-        setOrders(data)
+        const data = await response.json();
+        setOrders(data);
       }
     } catch (error) {
-      console.error('Error fetching orders:', error)
+      console.error("Error fetching orders:", error);
     }
-  }
+  };
 
   const fetchCustomers = async () => {
     try {
-      const response = await fetch('/api/users')
+      const response = await fetch("/api/users");
       if (response.ok) {
-        const data = await response.json()
-        setCustomers(data)
+        const data = await response.json();
+        setCustomers(data);
       }
     } catch (error) {
-      console.error('Error fetching customers:', error)
+      console.error("Error fetching customers:", error);
     }
-  }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    
+    e.preventDefault();
+
     try {
-      const response = await fetch('/api/invoices', {
-        method: 'POST',
+      const response = await fetch("/api/invoices", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json'
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           ...formData,
           amount: parseFloat(formData.amount),
-          tax: parseFloat(formData.tax)
-        })
-      })
+          tax: parseFloat(formData.tax),
+        }),
+      });
 
       if (response.ok) {
-        await fetchInvoices()
-        setIsDialogOpen(false)
-        resetForm()
+        await fetchInvoices();
+        setIsDialogOpen(false);
+        resetForm();
       }
     } catch (error) {
-      console.error('Error creating invoice:', error)
+      console.error("Error creating invoice:", error);
     }
-  }
+  };
 
   const resetForm = () => {
     setFormData({
-      orderId: '',
-      customerId: '',
-      amount: '',
-      tax: '',
-      dueDate: ''
-    })
-  }
+      orderId: "",
+      customerId: "",
+      amount: "",
+      tax: "",
+      dueDate: "",
+    });
+  };
 
   const handlePayment = async (invoiceId: string) => {
     try {
       const response = await fetch(`/api/invoices/${invoiceId}/pay`, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json'
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          amount: invoices.find(inv => inv.id === invoiceId)?.totalAmount,
-          method: 'CREDIT_CARD'
-        })
-      })
+          amount: invoices.find((inv) => inv.id === invoiceId)?.totalAmount,
+          method: "CREDIT_CARD",
+        }),
+      });
 
       if (response.ok) {
-        await fetchInvoices()
+        await fetchInvoices();
       }
     } catch (error) {
-      console.error('Error processing payment:', error)
+      console.error("Error processing payment:", error);
     }
-  }
+  };
 
   const downloadInvoice = (invoice: Invoice) => {
     // Generate PDF content (simplified for demo)
@@ -189,74 +215,97 @@ export default function InvoiceManagement() {
 INVOICE #${invoice.invoiceNumber}
 ================================
 Date: ${new Date(invoice.createdAt).toLocaleDateString()}
-Due Date: ${invoice.dueDate ? new Date(invoice.dueDate).toLocaleDateString() : 'N/A'}
+Due Date: ${
+      invoice.dueDate ? new Date(invoice.dueDate).toLocaleDateString() : "N/A"
+    }
 
 Bill To:
 ${invoice.customer.name}
 ${invoice.customer.email}
 
 Description:
-${invoice.order ? `Order: ${invoice.order.orderNumber}` : 'Custom Invoice'}
+${invoice.order ? `Order: ${invoice.order.orderNumber}` : "Custom Invoice"}
 
 Amount: $${invoice.amount.toFixed(2)}
 Tax: $${invoice.tax.toFixed(2)}
 Total: $${invoice.totalAmount.toFixed(2)}
 
 Status: ${invoice.status}
-    `
+    `;
 
-    const blob = new Blob([invoiceContent], { type: 'text/plain' })
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement('a')
-    a.href = url
-    a.download = `invoice-${invoice.invoiceNumber}.txt`
-    document.body.appendChild(a)
-    a.click()
-    document.body.removeChild(a)
-    URL.revokeObjectURL(url)
-  }
+    const blob = new Blob([invoiceContent], { type: "text/plain" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `invoice-${invoice.invoiceNumber}.txt`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
 
-  const filteredInvoices = invoices.filter(invoice => {
-    const matchesSearch = invoice.invoiceNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         invoice.customer.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         (invoice.order && invoice.order.orderNumber.toLowerCase().includes(searchTerm.toLowerCase()))
-    const matchesStatus = statusFilter === 'all' || invoice.status === statusFilter
-    
-    return matchesSearch && matchesStatus
-  })
+  const filteredInvoices = invoices.filter((invoice) => {
+    const matchesSearch =
+      invoice.invoiceNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      invoice.customer.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (invoice.order &&
+        invoice.order.orderNumber
+          .toLowerCase()
+          .includes(searchTerm.toLowerCase()));
+    const matchesStatus =
+      statusFilter === "all" || invoice.status === statusFilter;
+
+    return matchesSearch && matchesStatus;
+  });
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'DRAFT': return 'bg-gray-100 text-gray-800'
-      case 'SENT': return 'bg-blue-100 text-blue-800'
-      case 'PAID': return 'bg-green-100 text-green-800'
-      case 'OVERDUE': return 'bg-red-100 text-red-800'
-      case 'CANCELLED': return 'bg-yellow-100 text-yellow-800'
-      default: return 'bg-gray-100 text-gray-800'
+      case "DRAFT":
+        return "bg-gray-100 text-gray-800";
+      case "SENT":
+        return "bg-blue-100 text-blue-800";
+      case "PAID":
+        return "bg-green-100 text-green-800";
+      case "OVERDUE":
+        return "bg-red-100 text-red-800";
+      case "CANCELLED":
+        return "bg-yellow-100 text-yellow-800";
+      default:
+        return "bg-gray-100 text-gray-800";
     }
-  }
+  };
 
   const getStatusIcon = (status: string) => {
     switch (status) {
-      case 'PAID': return <CheckCircle className="h-4 w-4" />
-      case 'OVERDUE': return <AlertTriangle className="h-4 w-4" />
-      case 'SENT': return <Send className="h-4 w-4" />
-      case 'DRAFT': return <FileText className="h-4 w-4" />
-      default: return <Clock className="h-4 w-4" />
+      case "PAID":
+        return <CheckCircle className="h-4 w-4" />;
+      case "OVERDUE":
+        return <AlertTriangle className="h-4 w-4" />;
+      case "SENT":
+        return <Send className="h-4 w-4" />;
+      case "DRAFT":
+        return <FileText className="h-4 w-4" />;
+      default:
+        return <Clock className="h-4 w-4" />;
     }
-  }
+  };
 
   const getInvoiceStats = () => {
-    const total = invoices.length
-    const paid = invoices.filter(inv => inv.status === 'PAID').length
-    const overdue = invoices.filter(inv => inv.status === 'OVERDUE').length
-    const pending = invoices.filter(inv => inv.status === 'SENT' || inv.status === 'DRAFT').length
-    const totalRevenue = invoices.reduce((sum, inv) => inv.status === 'PAID' ? sum + inv.totalAmount : sum, 0)
-    
-    return { total, paid, overdue, pending, totalRevenue }
-  }
+    const total = invoices.length;
+    const paid = invoices.filter((inv) => inv.status === "PAID").length;
+    const overdue = invoices.filter((inv) => inv.status === "OVERDUE").length;
+    const pending = invoices.filter(
+      (inv) => inv.status === "SENT" || inv.status === "DRAFT"
+    ).length;
+    const totalRevenue = invoices.reduce(
+      (sum, inv) => (inv.status === "PAID" ? sum + inv.totalAmount : sum),
+      0
+    );
 
-  const stats = getInvoiceStats()
+    return { total, paid, overdue, pending, totalRevenue };
+  };
+
+  const stats = getInvoiceStats();
 
   if (loading) {
     return (
@@ -266,7 +315,7 @@ Status: ${invoice.status}
           <p className="text-gray-600">Loading invoices...</p>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -274,8 +323,12 @@ Status: ${invoice.status}
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900">Invoice Management</h2>
-          <p className="text-gray-600">Create, manage, and process invoices and payments</p>
+          <h2 className="text-2xl font-bold text-gray-900">
+            Invoice Management
+          </h2>
+          <p className="text-gray-600">
+            Create, manage, and process invoices and payments
+          </p>
         </div>
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
@@ -295,7 +348,12 @@ Status: ${invoice.status}
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <Label htmlFor="customer">Customer</Label>
-                  <Select value={formData.customerId} onValueChange={(value) => setFormData({...formData, customerId: value})}>
+                  <Select
+                    value={formData.customerId}
+                    onValueChange={(value) =>
+                      setFormData({ ...formData, customerId: value })
+                    }
+                  >
                     <SelectTrigger>
                       <SelectValue placeholder="Select customer" />
                     </SelectTrigger>
@@ -310,12 +368,17 @@ Status: ${invoice.status}
                 </div>
                 <div>
                   <Label htmlFor="order">Order (Optional)</Label>
-                  <Select value={formData.orderId || ''} onValueChange={(value) => setFormData({...formData, orderId: value || undefined})}>
+                  <Select
+                    value={formData.orderId || ""}
+                    onValueChange={(value) =>
+                      setFormData({ ...formData, orderId: value || undefined })
+                    }
+                  >
                     <SelectTrigger>
                       <SelectValue placeholder="Select order" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">Custom Invoice</SelectItem>
+                      <SelectItem value="custom">Custom Invoice</SelectItem>
                       {orders.map((order) => (
                         <SelectItem key={order.id} value={order.id}>
                           {order.orderNumber} - ${order.totalAmount.toFixed(2)}
@@ -333,7 +396,9 @@ Status: ${invoice.status}
                     type="number"
                     step="0.01"
                     value={formData.amount}
-                    onChange={(e) => setFormData({...formData, amount: e.target.value})}
+                    onChange={(e) =>
+                      setFormData({ ...formData, amount: e.target.value })
+                    }
                     placeholder="0.00"
                     required
                   />
@@ -345,7 +410,9 @@ Status: ${invoice.status}
                     type="number"
                     step="0.01"
                     value={formData.tax}
-                    onChange={(e) => setFormData({...formData, tax: e.target.value})}
+                    onChange={(e) =>
+                      setFormData({ ...formData, tax: e.target.value })
+                    }
                     placeholder="0.00"
                     required
                   />
@@ -357,11 +424,17 @@ Status: ${invoice.status}
                   id="dueDate"
                   type="date"
                   value={formData.dueDate}
-                  onChange={(e) => setFormData({...formData, dueDate: e.target.value})}
+                  onChange={(e) =>
+                    setFormData({ ...formData, dueDate: e.target.value })
+                  }
                 />
               </div>
               <div className="flex justify-end space-x-2">
-                <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)}>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setIsDialogOpen(false)}
+                >
                   Cancel
                 </Button>
                 <Button type="submit">Create Invoice</Button>
@@ -392,7 +465,9 @@ Status: ${invoice.status}
             <CheckCircle className="h-4 w-4 text-green-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-green-600">{stats.paid}</div>
+            <div className="text-2xl font-bold text-green-600">
+              {stats.paid}
+            </div>
           </CardContent>
         </Card>
         <Card>
@@ -403,7 +478,9 @@ Status: ${invoice.status}
             <AlertTriangle className="h-4 w-4 text-red-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-red-600">{stats.overdue}</div>
+            <div className="text-2xl font-bold text-red-600">
+              {stats.overdue}
+            </div>
           </CardContent>
         </Card>
         <Card>
@@ -414,7 +491,9 @@ Status: ${invoice.status}
             <Clock className="h-4 w-4 text-yellow-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-yellow-600">{stats.pending}</div>
+            <div className="text-2xl font-bold text-yellow-600">
+              {stats.pending}
+            </div>
           </CardContent>
         </Card>
         <Card>
@@ -425,7 +504,9 @@ Status: ${invoice.status}
             <DollarSign className="h-4 w-4 text-purple-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">${stats.totalRevenue.toLocaleString()}</div>
+            <div className="text-2xl font-bold">
+              ${stats.totalRevenue.toLocaleString()}
+            </div>
           </CardContent>
         </Card>
       </div>
@@ -493,8 +574,12 @@ Status: ${invoice.status}
                       <div className="flex items-center">
                         <User className="h-4 w-4 mr-2 text-gray-400" />
                         <div>
-                          <div className="font-medium">{invoice.customer.name}</div>
-                          <div className="text-sm text-gray-500">{invoice.customer.email}</div>
+                          <div className="font-medium">
+                            {invoice.customer.name}
+                          </div>
+                          <div className="text-sm text-gray-500">
+                            {invoice.customer.email}
+                          </div>
                         </div>
                       </div>
                     </TableCell>
@@ -509,9 +594,12 @@ Status: ${invoice.status}
                     </TableCell>
                     <TableCell>
                       <div className="text-sm">
-                        <div className="font-medium">${invoice.totalAmount.toFixed(2)}</div>
+                        <div className="font-medium">
+                          ${invoice.totalAmount.toFixed(2)}
+                        </div>
                         <div className="text-gray-500">
-                          ${invoice.amount.toFixed(2)} + ${invoice.tax.toFixed(2)} tax
+                          ${invoice.amount.toFixed(2)} + $
+                          {invoice.tax.toFixed(2)} tax
                         </div>
                       </div>
                     </TableCell>
@@ -534,16 +622,24 @@ Status: ${invoice.status}
                     </TableCell>
                     <TableCell>
                       <div className="flex space-x-2">
-                        <Button variant="outline" size="sm" onClick={() => setSelectedInvoice(invoice)}>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => setSelectedInvoice(invoice)}
+                        >
                           <Eye className="h-4 w-4" />
                         </Button>
-                        <Button variant="outline" size="sm" onClick={() => downloadInvoice(invoice)}>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => downloadInvoice(invoice)}
+                        >
                           <Download className="h-4 w-4" />
                         </Button>
-                        {invoice.status !== 'PAID' && (
-                          <Button 
-                            variant="outline" 
-                            size="sm" 
+                        {invoice.status !== "PAID" && (
+                          <Button
+                            variant="outline"
+                            size="sm"
                             onClick={() => handlePayment(invoice.id)}
                             className="text-green-600 hover:text-green-700"
                           >
@@ -565,10 +661,15 @@ Status: ${invoice.status}
 
       {/* Invoice Details Modal */}
       {selectedInvoice && (
-        <Dialog open={!!selectedInvoice} onOpenChange={() => setSelectedInvoice(null)}>
+        <Dialog
+          open={!!selectedInvoice}
+          onOpenChange={() => setSelectedInvoice(null)}
+        >
           <DialogContent className="max-w-2xl">
             <DialogHeader>
-              <DialogTitle>Invoice Details - {selectedInvoice.invoiceNumber}</DialogTitle>
+              <DialogTitle>
+                Invoice Details - {selectedInvoice.invoiceNumber}
+              </DialogTitle>
               <DialogDescription>
                 Complete invoice information and payment history
               </DialogDescription>
@@ -577,68 +678,108 @@ Status: ${invoice.status}
               {/* Basic Info */}
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <Label className="text-sm font-medium text-gray-600">Invoice Number</Label>
-                  <p className="font-mono text-sm bg-gray-100 p-2 rounded">{selectedInvoice.invoiceNumber}</p>
+                  <Label className="text-sm font-medium text-gray-600">
+                    Invoice Number
+                  </Label>
+                  <p className="font-mono text-sm bg-gray-100 p-2 rounded">
+                    {selectedInvoice.invoiceNumber}
+                  </p>
                 </div>
                 <div>
-                  <Label className="text-sm font-medium text-gray-600">Status</Label>
+                  <Label className="text-sm font-medium text-gray-600">
+                    Status
+                  </Label>
                   <Badge className={getStatusColor(selectedInvoice.status)}>
                     {selectedInvoice.status}
                   </Badge>
                 </div>
                 <div>
-                  <Label className="text-sm font-medium text-gray-600">Created Date</Label>
-                  <p className="text-sm">{new Date(selectedInvoice.createdAt).toLocaleDateString()}</p>
+                  <Label className="text-sm font-medium text-gray-600">
+                    Created Date
+                  </Label>
+                  <p className="text-sm">
+                    {new Date(selectedInvoice.createdAt).toLocaleDateString()}
+                  </p>
                 </div>
                 <div>
-                  <Label className="text-sm font-medium text-gray-600">Due Date</Label>
+                  <Label className="text-sm font-medium text-gray-600">
+                    Due Date
+                  </Label>
                   <p className="text-sm">
-                    {selectedInvoice.dueDate 
+                    {selectedInvoice.dueDate
                       ? new Date(selectedInvoice.dueDate).toLocaleDateString()
-                      : 'No due date'
-                    }
+                      : "No due date"}
                   </p>
                 </div>
               </div>
 
               {/* Customer Info */}
               <div>
-                <Label className="text-sm font-medium text-gray-600 mb-2 block">Bill To</Label>
+                <Label className="text-sm font-medium text-gray-600 mb-2 block">
+                  Bill To
+                </Label>
                 <div className="bg-gray-50 p-3 rounded">
-                  <div className="font-medium">{selectedInvoice.customer.name}</div>
-                  <div className="text-sm text-gray-600">{selectedInvoice.customer.email}</div>
+                  <div className="font-medium">
+                    {selectedInvoice.customer.name}
+                  </div>
+                  <div className="text-sm text-gray-600">
+                    {selectedInvoice.customer.email}
+                  </div>
                 </div>
               </div>
 
               {/* Financial Info */}
               <div className="grid grid-cols-3 gap-4">
                 <div>
-                  <Label className="text-sm font-medium text-gray-600">Subtotal</Label>
-                  <p className="text-lg font-medium">${selectedInvoice.amount.toFixed(2)}</p>
+                  <Label className="text-sm font-medium text-gray-600">
+                    Subtotal
+                  </Label>
+                  <p className="text-lg font-medium">
+                    ${selectedInvoice.amount.toFixed(2)}
+                  </p>
                 </div>
                 <div>
-                  <Label className="text-sm font-medium text-gray-600">Tax</Label>
-                  <p className="text-lg font-medium">${selectedInvoice.tax.toFixed(2)}</p>
+                  <Label className="text-sm font-medium text-gray-600">
+                    Tax
+                  </Label>
+                  <p className="text-lg font-medium">
+                    ${selectedInvoice.tax.toFixed(2)}
+                  </p>
                 </div>
                 <div>
-                  <Label className="text-sm font-medium text-gray-600">Total</Label>
-                  <p className="text-lg font-bold text-green-600">${selectedInvoice.totalAmount.toFixed(2)}</p>
+                  <Label className="text-sm font-medium text-gray-600">
+                    Total
+                  </Label>
+                  <p className="text-lg font-bold text-green-600">
+                    ${selectedInvoice.totalAmount.toFixed(2)}
+                  </p>
                 </div>
               </div>
 
               {/* Payment History */}
               {selectedInvoice.payments.length > 0 && (
                 <div>
-                  <Label className="text-sm font-medium text-gray-600 mb-2 block">Payment History</Label>
+                  <Label className="text-sm font-medium text-gray-600 mb-2 block">
+                    Payment History
+                  </Label>
                   <div className="space-y-2">
                     {selectedInvoice.payments.map((payment) => (
-                      <div key={payment.id} className="flex items-center justify-between p-3 bg-green-50 rounded">
+                      <div
+                        key={payment.id}
+                        className="flex items-center justify-between p-3 bg-green-50 rounded"
+                      >
                         <div>
-                          <div className="font-medium text-sm">${payment.amount.toFixed(2)}</div>
-                          <div className="text-xs text-gray-600">{payment.method}</div>
+                          <div className="font-medium text-sm">
+                            ${payment.amount.toFixed(2)}
+                          </div>
+                          <div className="text-xs text-gray-600">
+                            {payment.method}
+                          </div>
                         </div>
                         <div className="text-xs text-gray-500">
-                          {payment.paidAt ? new Date(payment.paidAt).toLocaleDateString() : 'Pending'}
+                          {payment.paidAt
+                            ? new Date(payment.paidAt).toLocaleDateString()
+                            : "Pending"}
                         </div>
                       </div>
                     ))}
@@ -648,11 +789,14 @@ Status: ${invoice.status}
 
               {/* Actions */}
               <div className="flex justify-end space-x-2">
-                <Button variant="outline" onClick={() => downloadInvoice(selectedInvoice)}>
+                <Button
+                  variant="outline"
+                  onClick={() => downloadInvoice(selectedInvoice)}
+                >
                   <Download className="h-4 w-4 mr-2" />
                   Download
                 </Button>
-                {selectedInvoice.status !== 'PAID' && (
+                {selectedInvoice.status !== "PAID" && (
                   <Button onClick={() => handlePayment(selectedInvoice.id)}>
                     <CreditCard className="h-4 w-4 mr-2" />
                     Process Payment
@@ -667,8 +811,12 @@ Status: ${invoice.status}
       {filteredInvoices.length === 0 && (
         <div className="text-center py-12">
           <FileText className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-          <h3 className="text-lg font-medium text-gray-900 mb-2">No invoices found</h3>
-          <p className="text-gray-500 mb-4">Create your first invoice to get started</p>
+          <h3 className="text-lg font-medium text-gray-900 mb-2">
+            No invoices found
+          </h3>
+          <p className="text-gray-500 mb-4">
+            Create your first invoice to get started
+          </p>
           <Button onClick={() => setIsDialogOpen(true)}>
             <Plus className="h-4 w-4 mr-2" />
             New Invoice
@@ -676,5 +824,5 @@ Status: ${invoice.status}
         </div>
       )}
     </div>
-  )
+  );
 }
